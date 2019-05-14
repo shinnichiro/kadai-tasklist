@@ -44,6 +44,12 @@ class TasksController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request, [
+            "date" => "required|max:191",
+            "content" => "required|max:191",
+            "status" => "required|max:10",
+        ]);
+        
         $task = new Task;
         $task->date = $request->date;
         $task->content = $request->content;
@@ -92,6 +98,12 @@ class TasksController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->validate($request, [
+            "date" => "required|max:191",
+            "content" => "required|max:191",
+            "status" => "required|max:10",
+        ]);        
+        
         $task = Task::find($id);
         $task->date = $request->date;
         $task->content = $request->content;
