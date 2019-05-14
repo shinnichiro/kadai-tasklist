@@ -10,6 +10,7 @@
                 <tr>
                     <th>日付</th>
                     <th>内容</th>
+                    <th>状態</th>
                 </tr>
             </thead>
             <tbody>
@@ -17,6 +18,7 @@
                     <tr>
                         <td>{!! link_to_route("tasks.show", $task->date, ["id" => $task->id]) !!}</td>
                         <td>{{ $task->content }}</td>
+                        <td>{{ $task->status }}</td>
                     </tr>
                 @endforeach
             </tbody>
