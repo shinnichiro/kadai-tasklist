@@ -15,11 +15,23 @@ class TasksController extends Controller
      */
     public function index()
     {
+        $data = [];
         $tasks = Task::all();
         
-        return view("tasks.index", [
-            "tasks" => $tasks,
-        ]);
+        if (\Auth::check()){
+            $user = \Auth::user();
+            $tasks = $user->tasks()->orderBy("created_at", "desc")->paginate(10);
+            
+            $data = [
+                "user" => $user,
+                "tasks" => $tasks,
+            ];
+        } else {
+            return redirect("welcome");
+        }
+        
+        return view("tasks.index", $data);
+
     }
 
     /**
@@ -50,12 +62,12 @@ class TasksController extends Controller
             "status" => "required|max:10",
         ]);
         
-        $task = new Task;
-        $task->date = $request->date;
-        $task->content = $request->content;
-        $task->status = $request->status;
-        $task->save();
-        
+        $request->user()->tasks()->create([
+            "date" => $request->date,
+            "content" => $request->content,
+            "status" => $request->status
+        ]);
+    
         return redirect("tasks");
     }
 
@@ -84,9 +96,15 @@ class TasksController extends Controller
     {
         $task = Task::find($id);
         
-        return view("tasks.edit", [
-            "task" => $task,
-        ]);
+        if (\Auth::id() === $task->user_id) {
+            return view("tasks.edit", [
+                "task" => $task,
+            ]);
+        } else {
+            return redirect("welcome");
+        }
+        
+
     }
 
     /**
@@ -105,12 +123,16 @@ class TasksController extends Controller
         ]);        
         
         $task = Task::find($id);
-        $task->date = $request->date;
-        $task->content = $request->content;
-        $task->status = $request->status;
-        $task->save();
         
-        return redirect("tasks");
+        if (\Auth::id() === $task->user_id) {
+            $task->date = $request->date;
+            $task->content = $request->content;
+            $task->status = $request->status;
+            $task->save();
+            return redirect("tasks");
+        } else {
+            return redirect("welcome");
+        }
     }
 
     /**
@@ -122,8 +144,14 @@ class TasksController extends Controller
     public function destroy($id)
     {
         $task = Task::find($id);
-        $task->delete();
         
-        return redirect("tasks");
+        if (\Auth::id() === $task->user_id) {
+            $task->delete();
+            return redirect("tasks");
+        } else {
+            return redirect("welcome");
+        }
+        
+
     }
 }
