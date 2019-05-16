@@ -56,7 +56,7 @@ class TasksController extends Controller
         $task->status = $request->status;
         $task->save();
         
-        return redirect("/");
+        return redirect("tasks");
     }
 
     /**
@@ -110,7 +110,7 @@ class TasksController extends Controller
         $task->status = $request->status;
         $task->save();
         
-        return redirect("/");
+        return redirect("tasks");
     }
 
     /**
@@ -124,6 +124,6 @@ class TasksController extends Controller
         $task = Task::find($id);
         $task->delete();
         
-        return redirect("/");
+        return redirect("tasks");
     }
 }
